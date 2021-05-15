@@ -1,0 +1,55 @@
+<div class="form-section">
+    <form name="searchForm" [formGroup]="searchForm">
+        <mat-form-field class="form-field">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="patientName" placeholder="enter first/last name">
+            <mat-error *ngIf="patientName.hasError('pattern')">Invalid name</mat-error>
+            <mat-error *ngIf="patientName.hasError('required')">Name is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="form-field">
+            <mat-label>Date of Birth</mat-label>
+            <input matInput [matDatepicker]="picker" placeholder="YYYY/MM/DD" formControlName="patientDOB">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="patientDOB.hasError('required')">Please enter date in format YYYY-MM-DD</mat-error>
+        </mat-form-field>
+
+        <button type="button" class="search-button" [disabled]="searchForm.invalid" mat-stroked-button color="primary"
+            (click)="search()">Search</button> 
+
+    </form>
+</div>
+
+<div class="table-section">
+    <mat-table class="mat-elevation-z8 patient-table" [dataSource]="dataSource" matSort
+        (matSortChange)="sortData($event)">
+
+        <ng-container matColumnDef="DOB">
+            <mat-header-cell *matHeaderCellDef mat-sort-header="date">DOB</mat-header-cell>
+            <mat-cell *matCellDef="let patientRow">{{patientRow.birthDate}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+            <mat-cell class="" *matCellDef="let patientRow">{{getName(patientRow.name)}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="gender">
+            <mat-header-cell *matHeaderCellDef>Gender</mat-header-cell>
+            <mat-cell class="" *matCellDef="let patientRow">{{patientRow.gender}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="noRecords">
+            <mat-footer-cell *matFooterCellDef>No Records Found</mat-footer-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="headers; sticky: true"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: headers"></mat-row>
+
+        <mat-footer-row *matFooterRowDef="['noRecords']" [ngClass]="{'hide' : dataSource.data.length}"></mat-footer-row>
+
+    </mat-table>
+</div>
+
+<div class="footer-section">Patients data fetched in {{ loadTime | renderloadTime}}</div>
